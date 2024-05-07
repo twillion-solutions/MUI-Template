@@ -125,14 +125,14 @@ export default function SideBar() {
             edge="start"
             sx={{
               fontWeight:'bold',
-              color:'#757575',
+              color:'#4a4c4e',
               marginRight: 5,
               ...(open && { display: 'none' }),
             }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{color:'#757575'}} variant="h6" noWrap component="div">
+          <Typography sx={{color:'#4a4c4e',fontWeight:'bold'}} variant="h5" noWrap component="div">
            Foodo App
           </Typography>
           <Box sx={{ flexGrowashboard: 0 }}>
@@ -168,7 +168,7 @@ export default function SideBar() {
       </AppBar>
       <Drawer variant="permanent" open={open} >
         <DrawerHeader>
-           
+        <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG1UEQPNKrTtW7hzlzc2HblkrWVpvVxHR5qg&usqp=CAU' style={{width:'160px'}}/>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
           </IconButton>
@@ -178,7 +178,7 @@ export default function SideBar() {
           <List>
               {
                 sidebarLinks.map((link) => (
-                  <SiderbarItems link={link} navigate={navigate} open={open}/>
+                  <SiderbarItems key={link.id} link={link} navigate={navigate} open={open}/>
                 ))
               }
           </List>

@@ -1,10 +1,10 @@
 import React from 'react'
 import { Box } from '@mui/material'
-import SideBar from '../sidebar'
+import SideBar from './sidebar'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
-import DataTable from '../../Common/datagrid'
+import DataTable from '../components/datagrid';
 
 const Order = () => {
   const columns = [

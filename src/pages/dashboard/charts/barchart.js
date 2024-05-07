@@ -1,6 +1,7 @@
 
 
 import React from "react";
+import {Box} from '@mui/material'
 import { Bar } from "react-chartjs-2";
 import { CategoryScale, Chart } from "chart.js";
 
@@ -26,9 +27,9 @@ const BarChart = () => {
     ],
   };
   return (
-    <div>
-      <Bar data={data} />
-    </div>
+    <Box>
+      <Bar style={{width:'100%',height:'100%'}} data={data} />
+    </Box>
   );
 };
 export default BarChart;

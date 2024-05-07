@@ -1,5 +1,5 @@
 import React from 'react'
-import Users from '../DataGrid/users'
+import Users from './dashboard/DataGrid/users'
 
 const Fooder = () => {
   

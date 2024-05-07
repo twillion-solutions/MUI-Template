@@ -19,6 +19,6 @@ export const sidebarLinks = [
 
 export const settings = [
     {id:1,tittle:'Profile',path:'/dashboard/profile'},
-    {id:1,tittle:'Account',path:'/dashboard/account'},
-    {id:1,tittle:'Logout',path:'/dashboard/logout'},
+    {id:2,tittle:'Account',path:'/dashboard/account'},
+    {id:3,tittle:'Logout',path:'/dashboard/logout'},
 ];

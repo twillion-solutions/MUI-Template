@@ -1,10 +1,10 @@
 import React from 'react'
-import DataTable from '../../Common/datagrid'
 import EditIcon from '@mui/icons-material/Edit';
 import DeleteIcon from '@mui/icons-material/Delete';
 import IconButton from '@mui/material/IconButton';
 import { Box } from '@mui/material';
-import SideBar from '../sidebar';
+import SideBar from './sidebar';
+import DataTable from '../components/datagrid';
 
 const Foodee = () => {
   const columns = [
