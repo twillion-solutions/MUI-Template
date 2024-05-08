@@ -97,9 +97,7 @@ const Users = () => {
     },
   ];
   return (
-    <Container>
       <Box>
-        <Paper>
           <DataGrid
             rows={rows}
             columns={columns}
@@ -107,9 +105,7 @@ const Users = () => {
             rowsPerPageOptions={[5, 10, 20]}
             disableSelectionOnClick
           />
-        </Paper>
       </Box>
-    </Container>
   );
 };
 

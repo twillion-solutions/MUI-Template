@@ -1,6 +1,7 @@
 import React from "react";
 import { Line } from 'react-chartjs-2';
 import { CategoryScale, Chart } from "chart.js";
+import '../style.css'
 
 Chart.register(CategoryScale);
 
@@ -17,7 +18,7 @@ const data = {
 const LineChart = () => {
   return (
     <div>
-      <Line data={data} />
+      <Line className="canvas-chart" height="300" style={{padding:'6px'}} data={data} />
     </div>
   );
 };

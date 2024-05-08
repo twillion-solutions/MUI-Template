@@ -4,6 +4,7 @@ import React from "react";
 import {Box} from '@mui/material'
 import { Bar } from "react-chartjs-2";
 import { CategoryScale, Chart } from "chart.js";
+import '../style.css';
 
 Chart.register(CategoryScale);
 
@@ -27,8 +28,8 @@ const BarChart = () => {
     ],
   };
   return (
-    <Box>
-      <Bar style={{width:'100%',height:'100%'}} data={data} />
+    <Box sx={{width:'100%'}}>
+      <Bar className="canvas-chart" height="300" style={{padding:'6px'}} data={data} />
     </Box>
   );
 };

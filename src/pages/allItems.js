@@ -101,7 +101,7 @@ const AllItems = () => {
     <Box sx={{display:'flex'}}>
     <SideBar/>
     <Box component="main" sx={{ flexGrow: 1, p: 3 ,marginTop:"55px"}}>
-      <Container  maxWidth>
+      <Container  fixed>
           <Box>
               <DataTable columns={columns} rows={rows}/>
           </Box>
