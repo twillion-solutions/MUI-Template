@@ -13,14 +13,20 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
+import {toast} from 'react-hot-toast';
 
 const UpdatePassword = () => {
+  const location = useLocation();
   const navigate = useNavigate();
     const [formData,setFormData] = useState({
         password:'',
         confirmPassword:''
     })
   const [showPassword, setShowPassword] = useState(false);
+  const queryParams = new URLSearchParams(location.search);
+  const tokens = queryParams.get('token');
 
   const handleChange = useCallback((e,name) => {
     setFormData((prev) =>({
@@ -29,8 +35,27 @@ const UpdatePassword = () => {
     }))
   },[])
 
-  const handleSign = () => {
-    navigate('/admin-dashboard')
+  const hnadleResetPassword = async() => {
+    const token = localStorage.getItem('token')
+
+    const payload = {
+      newPassword:formData.password,
+      confirmPassword:formData.confirmPassword,
+      token:JSON.parse(token)
+    }
+
+    const response = await axios.post(`http://localhost:4000/api/reset-password/${tokens}`,payload).then((res) => {
+      console.log('response::',res)
+      toast.success('Password Reset Successfully')
+      setFormData({
+        password:'',
+        confirmPassword:''
+      });
+      navigate('/login  ')
+    }).catch((error) => {
+      console.log("error::",error)
+      toast.error(error.response && error.response.data.msg)
+    })
   }
 
   return (
@@ -64,7 +89,7 @@ const UpdatePassword = () => {
             style={{ alignSelf: "center", padding: 0 }}
           />
           <Typography align="center" component="h1" variant="h5" sx={{ mb: 1 }}>
-            Update Password
+            Reset Password
           </Typography>
           <TextField
             size="small"
@@ -98,11 +123,11 @@ const UpdatePassword = () => {
             required
           />
 
-          <Button onClick={handleSign} variant="contained" sx={{
+          <Button onClick={hnadleResetPassword} variant="contained" sx={{
             backgroundColor: '#fc661a',
             '&:hover': {
               backgroundColor: '#fc661a',
-            },}} type="submit">
+            },}}>
             Update
           </Button>
           <Link

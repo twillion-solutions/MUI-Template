@@ -9,6 +9,8 @@ import {
 
 } from "@mui/material";
 import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import {toast} from 'react-hot-toast';
 
 const ForgotPassword = () => {
   const navigate = useNavigate();
@@ -23,8 +25,25 @@ const ForgotPassword = () => {
     }))
   },[])
 
-  const handleForgotPassword = () => {
-    navigate('/update-password');
+  
+
+  const handleForgotPassword = async () => {
+    const token = localStorage.getItem('token')
+
+    const payload = {
+      email:formData.email,
+      token:JSON.parse(token)
+    }
+
+    const response = await axios.post('http://localhost:4000/api/forgot-password',payload).then((res) => {
+      console.log("response::",res)
+      toast.success('Forgot Password Link Sent Successfully!');
+      setFormData({email:''})
+      navigate('/login');
+    }).catch((error) => {
+      console.log('error::',error)
+      toast.error(error.response && error.response.data.msg)
+    })
   }
 
   return (
@@ -64,8 +83,8 @@ const ForgotPassword = () => {
             size="small"
             value={formData.email}
             onChange={(e) => {handleChange(e,'email')}}
-            name="username"
-            label="Username"
+            name="email"
+            label="Email"
             variant="outlined"
             required
           />
@@ -73,7 +92,7 @@ const ForgotPassword = () => {
             backgroundColor: '#fc661a',
             '&:hover': {
               backgroundColor: '#fc661a',
-            },}}  type="submit">
+            },}} >
             Send
           </Button>
           <Link

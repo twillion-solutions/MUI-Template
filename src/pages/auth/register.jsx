@@ -13,36 +13,64 @@ import {
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { Radio, RadioGroup } from '@mui/material';
+import FormLabel from '@mui/material/FormLabel';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 
-const Login = () => {
+const Register = () => {
   const navigate = useNavigate();
     const [formData,setFormData] = useState({
+        firstName:'',
+        lastName:'',
         email:'',
-        password:''
+        phone:'',
+        password:'',
+        gender:'male',
     })
-  const [rememberMe, setRememberMe] = useState(false);
-  const [showPassword, setShowPassword] = useState(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [file,setFile] = useState(null);
+
+    const handleFileChnage = (e) => {
+      setFile(e.target.files[0])
+    }
 
   const handleChange = useCallback((e,name) => {
+
     setFormData((prev) =>({
         ...prev,
         [name] : e.target.value
     }))
   },[])
 
-  const handleSign = async() => {
-    const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
-      localStorage.setItem('token',JSON.stringify(res.data.data))
+  const handleRegister = async() => {
+    const data = new FormData();
+    data.append('firstName',formData.firstName)
+    data.append('lastName',formData.lastName)
+    data.append('email',formData.email)
+    data.append('password',formData.password)
+    data.append('gender',formData.gender)
+    data.append('phone',formData.phone)
+    data.append('file',file)
+    
+    const response = await axios.post('http://localhost:4000/api/register', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    }).then((res) => {
+      console.log("response::",res);
       setFormData({
+        firstName:'',
+        lastName:'',
         email:'',
+        phone:'',
         password:'',
+        gender:'male',
       })
-      navigate('/dashboard')
-      toast.success('User Login Successfully!')
+      setFile(null);
+      navigate('/login')
+      toast.success('User Register Successfully!')
     }).catch((error) => {
       console.log('error::',error)
       toast.error(error.response && error.response.data.msg)
@@ -80,14 +108,41 @@ const Login = () => {
             style={{ alignSelf: "center", padding: 0 }}
           />
           <Typography align="center" component="h1" variant="h5" sx={{ mb: 1 }}>
-            Sign in
+            Sign UP
           </Typography>
+          <TextField
+            size="small"
+            value={formData.firstName}
+            onChange={(e) => {handleChange(e,'firstName')}}
+            name="firstName"
+            label="First Name"
+            variant="outlined"
+            required
+          />
+          <TextField
+            size="small"
+            value={formData.lastName}
+            onChange={(e) => {handleChange(e,'lastName')}}
+            name="lastName"
+            label="Last Name"
+            variant="outlined"
+            required
+          />
           <TextField
             size="small"
             value={formData.email}
             onChange={(e) => {handleChange(e,'email')}}
-            name="username"
-            label="Username"
+            name="email"
+            label="Email"
+            variant="outlined"
+            required
+          />
+          <TextField
+            size="small"
+            value={formData.phone}
+            onChange={(e) => {handleChange(e,'phone')}}
+            name="phone"
+            label="Phone"
             variant="outlined"
             required
           />
@@ -113,40 +168,31 @@ const Login = () => {
             }}
             required
           />
-          <FormControlLabel
-            control={
-              <Switch
-                color="warning"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-              />
-            }
-            color="primary"
-            label="Remember Me"
-          />
-          <Button onClick={handleSign} variant="contained" disabled={rememberMe ? false : true} sx={{
+          <input type='file' onChange={(e) => handleFileChnage(e)} name='file'/>
+          <FormLabel id="gender" sx={{textAlign:"left"}}>Gender</FormLabel>
+          <RadioGroup
+            row
+            aria-labelledby="gender"
+            name="gender"
+            value={formData.gender}
+            onChange={(e) => {handleChange(e,'gender')}}
+          >
+            <FormControlLabel value="female" control={<Radio />} label="Female" />
+            <FormControlLabel value="male" control={<Radio />} label="Male" />
+          </RadioGroup>
+  
+          <Button onClick={handleRegister} variant="contained" sx={{
             backgroundColor: '#fc661a',
             '&:hover': {
               backgroundColor: '#fc661a',
             },}}>
-            Sign In
+            Sign UP
           </Button>
-          <Link
-            to='/forgot-password'
-            align="right"
-            variant="subtitle2"
-            underline="hover"
-            sx={{
-              cursor: "pointer"
-            }}
-          >
-            Forgot password?
-          </Link>
         </Stack>
       </Paper>
      
     </Box>
   );
-};
+}
 
-export default Login;
+export default Register;

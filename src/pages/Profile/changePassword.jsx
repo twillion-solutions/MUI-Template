@@ -8,23 +8,25 @@ import {
   InputAdornment,
   Button,
   IconButton,
-  FormControlLabel,
-  Switch
 } from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
+import SideBar from '../sidebar'
 
-const Login = () => {
+
+const ChangePassword = () => {
+  const location = useLocation();
   const navigate = useNavigate();
     const [formData,setFormData] = useState({
-        email:'',
-        password:''
+        oldPassword:'',
+        newPassword:'',
+        confirmPassword:''
     })
-  const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
   const handleChange = useCallback((e,name) => {
@@ -35,21 +37,33 @@ const Login = () => {
   },[])
 
   const handleSign = async() => {
-    const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
-      localStorage.setItem('token',JSON.stringify(res.data.data))
+    const token = localStorage.getItem('token')
+
+    const payload = {
+      oldPassword:formData.oldPassword,
+        newPassword:formData.newPassword,
+        confirmPassword:formData.confirmPassword,
+        token:JSON.parse(token)
+    }
+
+    const response = await axios.post(`http://localhost:4000/api/change-password`,payload).then((res) => {
+      toast.success('Password Change Successfully')
       setFormData({
-        email:'',
-        password:'',
-      })
+        newPassword:'',
+        oldPassword:'',
+        confirmPassword:''
+      });
       navigate('/dashboard')
-      toast.success('User Login Successfully!')
     }).catch((error) => {
-      console.log('error::',error)
+      console.log("error::",error)
       toast.error(error.response && error.response.data.msg)
-    });
+    })
   }
 
   return (
+    <Box sx={{display:'flex'}}>
+      <SideBar />
+      <Box component="main" sx={{ flexGrow: 1, p: 3 ,marginTop:"55px"}}>
     <Box
       sx={{
         minHeight: "100vh",
@@ -80,25 +94,35 @@ const Login = () => {
             style={{ alignSelf: "center", padding: 0 }}
           />
           <Typography align="center" component="h1" variant="h5" sx={{ mb: 1 }}>
-            Sign in
+            Change Password
           </Typography>
           <TextField
             size="small"
-            value={formData.email}
-            onChange={(e) => {handleChange(e,'email')}}
-            name="username"
-            label="Username"
+            name="oldPassword"
+            label="Old Password"
             variant="outlined"
+
+            value={formData.oldPassword}
+            onChange={(e) => {handleChange(e,'oldPassword')}}
             required
           />
           <TextField
             size="small"
-            name="password"
-            label="Password"
+            name="newPassword"
+            label="New Password"
+            variant="outlined"
+            value={formData.newPassword}
+            onChange={(e) => {handleChange(e,'newPassword')}}
+            required
+          />
+          <TextField
+            size="small"
+            name="confirmPassword"
+            label="Confirm Password"
             variant="outlined"
             type={showPassword ? "text" : "password"}
-            value={formData.password}
-            onChange={(e) => {handleChange(e,'password')}}
+            value={formData.confirmPassword}
+            onChange={(e) => {handleChange(e,'confirmPassword')}}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
@@ -113,26 +137,16 @@ const Login = () => {
             }}
             required
           />
-          <FormControlLabel
-            control={
-              <Switch
-                color="warning"
-                checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
-              />
-            }
-            color="primary"
-            label="Remember Me"
-          />
-          <Button onClick={handleSign} variant="contained" disabled={rememberMe ? false : true} sx={{
+
+          <Button onClick={handleSign} variant="contained" sx={{
             backgroundColor: '#fc661a',
             '&:hover': {
               backgroundColor: '#fc661a',
             },}}>
-            Sign In
+            Update
           </Button>
           <Link
-            to='/forgot-password'
+            to='/login'
             align="right"
             variant="subtitle2"
             underline="hover"
@@ -140,13 +154,15 @@ const Login = () => {
               cursor: "pointer"
             }}
           >
-            Forgot password?
+            Back
           </Link>
         </Stack>
       </Paper>
      
     </Box>
+    </Box>
+    </Box>
   );
 };
 
-export default Login;
+export default ChangePassword;
