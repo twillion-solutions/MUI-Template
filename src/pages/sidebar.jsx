@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React,{useState} from 'react';
 import { styled, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -23,6 +23,10 @@ import Avatar from '@mui/material/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { sidebarLinks } from '../constant/sidebarLinks';
 import SiderbarItems from './sidebarItems';
+import {useSelector,useDispatch} from 'react-redux'
+import Confirmation from '../components/confirmationModal';
+import {logOut} from '../operations/authAPi/index';
+
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -90,11 +94,13 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function SideBar() {
+  const {profile} = useSelector((store) => store.profile)
   const [anchorElUser, setAnchorElUser] = React.useState(null);
   const theme = useTheme();
   const [open, setOpen] = React.useState(true);
-
-    const navigate=useNavigate();
+  const [isOpen,setIsOpen] = useState(false);
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -109,11 +115,22 @@ export default function SideBar() {
   };
 
   const handleCloseUserMenu = (path) => {
+    if(path === ''){
+      setIsOpen(true)
+    }
     navigate(`${path}`)
     setAnchorElUser(null);
   };
 
+  const handleClick = () => {
+    const token = localStorage.getItem('token');
+    dispatch(logOut(JSON.parse(token)),navigate);
+    setIsOpen(false);
+    navigate('/login')
+  }
+
   return (
+    <React.Fragment>
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <AppBar position="fixed" open={open} sx={{backgroundColor:'white'}}>
@@ -138,7 +155,10 @@ export default function SideBar() {
           <Box sx={{ flexGrowashboard: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-                <Avatar alt="Remy Sharp" src="/static/images/avatar/2.jpg" />
+              <Avatar
+                alt={`${profile?.firstName} ${profile?.lastName}`}
+                src={ profile?.profile}
+              />
               </IconButton>
             </Tooltip>
             <Menu
@@ -185,7 +205,8 @@ export default function SideBar() {
         </Box>
     
       </Drawer>
-    
     </Box>
+    <Confirmation handleClick={handleClick} open={isOpen} setOpen={setIsOpen} title={'Are you Sure to Logout?'} description={''}/>
+    </React.Fragment>
   );
 }

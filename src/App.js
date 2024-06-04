@@ -4,7 +4,6 @@ import Login from './pages/auth/login'
 import ForgotPassword from './pages/auth/forgotPassword'
 import UpdatePassword from './pages/auth/resetPassword'
 import Profile from './pages/Profile/profile'
-import Account from './pages/Profile/account'
 import AllItems from './pages/allItems'
 import Settings from './pages/settings'
 import AddProduct from './pages/addProduct'
@@ -33,7 +32,6 @@ const App = () => {
           <Route path='/dashboard/settings' element={<Settings/>}/>
 
           <Route path='/dashboard/profile' element={<Profile/>}/>
-          <Route path='/dashboard/account' element={<Account/>}/>
           <Route path='/dashboard/change-password' element={<ChangePassword/>}/>
 
         </Routes>

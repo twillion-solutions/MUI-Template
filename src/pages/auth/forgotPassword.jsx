@@ -12,13 +12,25 @@ import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 
+import Joi from '../../utils/validator'
+
+const forgotSchema = {
+  email: Joi.string().email().label('Email').required(),
+}
+
 const ForgotPassword = () => {
   const navigate = useNavigate();
+  const [errors,setErrors] = useState({});
     const [formData,setFormData] = useState({
         email:'',
     })
 
   const handleChange = useCallback((e,name) => {
+    setErrors({
+      ...errors,
+      [name]: Joi.validateToPlainErrors(e.target.value, forgotSchema[name])
+    });
+
     setFormData((prev) =>({
         ...prev,
         [name] : e.target.value
@@ -28,6 +40,11 @@ const ForgotPassword = () => {
   
 
   const handleForgotPassword = async () => {
+    const errors = Joi.validateToPlainErrors(formData, forgotSchema);
+    if(Object.keys(errors).length) {
+      setErrors(errors)
+      toast.error('Validation Errors');
+    }else {
     const token = localStorage.getItem('token')
 
     const payload = {
@@ -45,7 +62,7 @@ const ForgotPassword = () => {
       toast.error(error.response && error.response.data.msg)
     })
   }
-
+  }
   return (
     <Box
       sx={{
@@ -80,6 +97,8 @@ const ForgotPassword = () => {
             Forgot Password
           </Typography>
           <TextField
+            error={Joi.getFirstPlainError(errors, 'email')}
+            helperText={Joi.getFirstPlainError(errors, 'email')}
             size="small"
             value={formData.email}
             onChange={(e) => {handleChange(e,'email')}}

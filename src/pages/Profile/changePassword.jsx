@@ -17,6 +17,13 @@ import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 import SideBar from '../sidebar'
+import Joi from '../../utils/validator'
+
+const changePasswordSchema = {
+  oldPassword: Joi.string().label('oldPassword').required(),
+  newPassword: Joi.string().label('newPassword').required(),
+  confirmPassword: Joi.string().label('confirmPassword').required(),
+}
 
 
 const ChangePassword = () => {
@@ -28,8 +35,14 @@ const ChangePassword = () => {
         confirmPassword:''
     })
   const [showPassword, setShowPassword] = useState(false);
+  const [errors,setErrors] = useState({});
 
   const handleChange = useCallback((e,name) => {
+    setErrors({
+      ...errors,
+      [name]: Joi.validateToPlainErrors(e.target.value, changePasswordSchema[name])
+    });
+
     setFormData((prev) =>({
         ...prev,
         [name] : e.target.value
@@ -37,6 +50,11 @@ const ChangePassword = () => {
   },[])
 
   const handleSign = async() => {
+    const errors = Joi.validateToPlainErrors(formData, changePasswordSchema);
+    if(Object.keys(errors).length) {
+      setErrors(errors)
+      toast.error('Validation Errors');
+    }else {
     const token = localStorage.getItem('token')
 
     const payload = {
@@ -59,6 +77,7 @@ const ChangePassword = () => {
       toast.error(error.response && error.response.data.msg)
     })
   }
+}
 
   return (
     <Box sx={{display:'flex'}}>
@@ -66,10 +85,8 @@ const ChangePassword = () => {
       <Box component="main" sx={{ flexGrow: 1, p: 3 ,marginTop:"55px"}}>
     <Box
       sx={{
-        minHeight: "100vh",
-        backgroundImage: `url('https://wallpapercave.com/wp/wp3525740.png')`,
-        backgroundRepeat: "no-repeat",
-        backgroundPosition: "50% 0",
+        minHeight: "80vh",
+        background:'#e8e8e8',
         backgroundSize: "cover",
         display: "flex",
         justifyContent: "center",
@@ -79,24 +96,21 @@ const ChangePassword = () => {
     >
       <Paper
         component="form"
+        elevation={3}
         sx={{
           p: "2rem",
-          width: "24rem",
+          width: "35rem",
           maxWidth: "95%",
           zIndex: "1"
         }}
       >
         <Stack spacing={2}>
-          <img
-            src={'https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAHXPluq6GtTRPDIHRv5kJPy86uFjp5sO7hg&usqp=CAU'}
-            alt="logo"
-            width="100"
-            style={{ alignSelf: "center", padding: 0 }}
-          />
-          <Typography align="center" component="h1" variant="h5" sx={{ mb: 1 }}>
+          <Typography align="center" component="h1" variant="h5" sx={{ mb: 1,fontWeight:'bold',color:'#4e4e4e' }}>
             Change Password
           </Typography>
           <TextField
+            error={Joi.getFirstPlainError(errors, 'oldPassword')}
+            helperText={Joi.getFirstPlainError(errors, 'oldPassword')}
             size="small"
             name="oldPassword"
             label="Old Password"
@@ -107,6 +121,8 @@ const ChangePassword = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'newPassword')}
+            helperText={Joi.getFirstPlainError(errors, 'newPassword')}
             size="small"
             name="newPassword"
             label="New Password"
@@ -116,6 +132,8 @@ const ChangePassword = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'confirmPassword')}
+            helperText={Joi.getFirstPlainError(errors, 'confirmPassword')}
             size="small"
             name="confirmPassword"
             label="Confirm Password"
@@ -146,7 +164,7 @@ const ChangePassword = () => {
             Update
           </Button>
           <Link
-            to='/login'
+            to='/dashboard'
             align="right"
             variant="subtitle2"
             underline="hover"

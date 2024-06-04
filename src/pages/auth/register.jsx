@@ -18,6 +18,16 @@ import { Radio, RadioGroup } from '@mui/material';
 import FormLabel from '@mui/material/FormLabel';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
+import Joi from '../../utils/validator'
+
+const registerSchema = {
+  firstName: Joi.string().label('FirstName').required(),
+  lastName: Joi.string().label('Last Name').required(),
+  email: Joi.string().email().label('Email').required(),
+  phone: Joi.number().label('Phone').required(),
+  password: Joi.string().label('Password').required(),
+  gender: Joi.string().label('gender').required(),
+}
 
 const Register = () => {
   const navigate = useNavigate();
@@ -31,12 +41,18 @@ const Register = () => {
     })
     const [showPassword, setShowPassword] = useState(false);
     const [file,setFile] = useState(null);
+    const [errors,setErrors] = useState({});
 
     const handleFileChnage = (e) => {
       setFile(e.target.files[0])
     }
 
   const handleChange = useCallback((e,name) => {
+
+    setErrors({
+      ...errors,
+      [name]: Joi.validateToPlainErrors(e.target.value, registerSchema[name])
+    });
 
     setFormData((prev) =>({
         ...prev,
@@ -45,6 +61,11 @@ const Register = () => {
   },[])
 
   const handleRegister = async() => {
+    const errors = Joi.validateToPlainErrors(formData, registerSchema);
+    if(Object.keys(errors).length) {
+      setErrors(errors)
+      toast.error('Validation Errors');
+    }else {
     const data = new FormData();
     data.append('firstName',formData.firstName)
     data.append('lastName',formData.lastName)
@@ -58,6 +79,7 @@ const Register = () => {
       headers: {
         'Content-Type': 'multipart/form-data'
       }
+      
     }).then((res) => {
       console.log("response::",res);
       setFormData({
@@ -75,6 +97,7 @@ const Register = () => {
       console.log('error::',error)
       toast.error(error.response && error.response.data.msg)
     });
+    }
   }
 
   return (
@@ -111,6 +134,8 @@ const Register = () => {
             Sign UP
           </Typography>
           <TextField
+            error={Joi.getFirstPlainError(errors, 'firstName')}
+            helperText={Joi.getFirstPlainError(errors, 'firstName')}
             size="small"
             value={formData.firstName}
             onChange={(e) => {handleChange(e,'firstName')}}
@@ -120,6 +145,8 @@ const Register = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'lastName')}
+            helperText={Joi.getFirstPlainError(errors, 'lastName')}
             size="small"
             value={formData.lastName}
             onChange={(e) => {handleChange(e,'lastName')}}
@@ -129,6 +156,8 @@ const Register = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'email')}
+            helperText={Joi.getFirstPlainError(errors, 'email')}
             size="small"
             value={formData.email}
             onChange={(e) => {handleChange(e,'email')}}
@@ -138,6 +167,8 @@ const Register = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'phone')}
+            helperText={Joi.getFirstPlainError(errors, 'phone')}
             size="small"
             value={formData.phone}
             onChange={(e) => {handleChange(e,'phone')}}
@@ -147,6 +178,8 @@ const Register = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'password')}
+            helperText={Joi.getFirstPlainError(errors, 'password')}
             size="small"
             name="password"
             label="Password"
@@ -171,15 +204,28 @@ const Register = () => {
           <input type='file' onChange={(e) => handleFileChnage(e)} name='file'/>
           <FormLabel id="gender" sx={{textAlign:"left"}}>Gender</FormLabel>
           <RadioGroup
-            row
-            aria-labelledby="gender"
-            name="gender"
-            value={formData.gender}
-            onChange={(e) => {handleChange(e,'gender')}}
-          >
-            <FormControlLabel value="female" control={<Radio />} label="Female" />
-            <FormControlLabel value="male" control={<Radio />} label="Male" />
-          </RadioGroup>
+          row
+          aria-labelledby="gender"
+          name="gender"
+          value={formData.gender}
+          onChange={(e) => {handleChange(e,'gender')}}
+        >
+          <FormControlLabel
+            value="female"
+            control={<Radio />}
+            label="Female"
+          />
+          <FormControlLabel
+            value="male"
+            control={<Radio />}
+            label="Male"
+          />
+        </RadioGroup>
+        {errors["gender"] && (
+          <Typography variant="body2" color="error">
+            {errors["gender"][0]}
+          </Typography>
+        )}
   
           <Button onClick={handleRegister} variant="contained" sx={{
             backgroundColor: '#fc661a',

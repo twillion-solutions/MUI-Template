@@ -17,6 +17,12 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
+import Joi from '../../utils/validator'
+
+const loginSchema = {
+  email: Joi.string().email().label('Email').required(),
+  password: Joi.string().label('Password').required(),
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -26,8 +32,15 @@ const Login = () => {
     })
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [errors,setErrors] = useState({});
 
   const handleChange = useCallback((e,name) => {
+
+    setErrors({
+      ...errors,
+      [name]: Joi.validateToPlainErrors(e.target.value, loginSchema[name])
+    });
+
     setFormData((prev) =>({
         ...prev,
         [name] : e.target.value
@@ -35,6 +48,11 @@ const Login = () => {
   },[])
 
   const handleSign = async() => {
+    const errors = Joi.validateToPlainErrors(formData, loginSchema);
+    if(Object.keys(errors).length) {
+      setErrors(errors)
+      toast.error('Validation Errors');
+    }else {
     const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
       localStorage.setItem('token',JSON.stringify(res.data.data))
       setFormData({
@@ -48,6 +66,7 @@ const Login = () => {
       toast.error(error.response && error.response.data.msg)
     });
   }
+}
 
   return (
     <Box
@@ -83,15 +102,19 @@ const Login = () => {
             Sign in
           </Typography>
           <TextField
+            error={Joi.getFirstPlainError(errors, 'email')}
+            helperText={Joi.getFirstPlainError(errors, 'email')}
             size="small"
             value={formData.email}
             onChange={(e) => {handleChange(e,'email')}}
-            name="username"
+            name="email"
             label="Username"
             variant="outlined"
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'password')}
+            helperText={Joi.getFirstPlainError(errors, 'password')}
             size="small"
             name="password"
             label="Password"

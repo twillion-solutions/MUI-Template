@@ -16,10 +16,17 @@ import { useNavigate } from "react-router-dom";
 import { useLocation } from 'react-router-dom';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
+import Joi from '../../utils/validator'
+
+const resetSchema = {
+  password: Joi.string().label('password').required(),
+  confirmPassword: Joi.string().label('confirmPassword').required(),
+}
 
 const UpdatePassword = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [errors,setErrors] = useState({});
     const [formData,setFormData] = useState({
         password:'',
         confirmPassword:''
@@ -29,6 +36,12 @@ const UpdatePassword = () => {
   const tokens = queryParams.get('token');
 
   const handleChange = useCallback((e,name) => {
+
+    setErrors({
+      ...errors,
+      [name]: Joi.validateToPlainErrors(e.target.value, resetSchema[name])
+    });
+
     setFormData((prev) =>({
         ...prev,
         [name] : e.target.value
@@ -36,6 +49,11 @@ const UpdatePassword = () => {
   },[])
 
   const hnadleResetPassword = async() => {
+    const errors = Joi.validateToPlainErrors(formData, resetSchema);
+    if(Object.keys(errors).length) {
+      setErrors(errors)
+      toast.error('Validation Errors');
+    }else {
     const token = localStorage.getItem('token')
 
     const payload = {
@@ -57,6 +75,7 @@ const UpdatePassword = () => {
       toast.error(error.response && error.response.data.msg)
     })
   }
+}
 
   return (
     <Box
@@ -92,6 +111,8 @@ const UpdatePassword = () => {
             Reset Password
           </Typography>
           <TextField
+            error={Joi.getFirstPlainError(errors, 'password')}
+            helperText={Joi.getFirstPlainError(errors, 'password')}
             size="small"
             name="password"
             label="Password"
@@ -101,8 +122,10 @@ const UpdatePassword = () => {
             required
           />
           <TextField
+            error={Joi.getFirstPlainError(errors, 'confirmPassword')}
+            helperText={Joi.getFirstPlainError(errors, 'confirmPassword')}
             size="small"
-            name="password"
+            name="confirmPassword"
             label="Confirm Password"
             variant="outlined"
             type={showPassword ? "text" : "password"}
