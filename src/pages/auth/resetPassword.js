@@ -24,7 +24,6 @@ const resetSchema = {
 }
 
 const UpdatePassword = () => {
-  const location = useLocation();
   const navigate = useNavigate();
   const [errors,setErrors] = useState({});
     const [formData,setFormData] = useState({
@@ -32,8 +31,11 @@ const UpdatePassword = () => {
         confirmPassword:''
     })
   const [showPassword, setShowPassword] = useState(false);
-  const queryParams = new URLSearchParams(location.search);
-  const tokens = queryParams.get('token');
+  const [showPasswords, setShowPasswords] = useState(false);
+  const location = useLocation();
+  const query = new URLSearchParams(location.search);
+  const tokens = query.get('token');
+  console.log("token::",tokens)
 
   const handleChange = useCallback((e,name) => {
 
@@ -54,15 +56,13 @@ const UpdatePassword = () => {
       setErrors(errors)
       toast.error('Validation Errors');
     }else {
-    const token = localStorage.getItem('token')
 
     const payload = {
       newPassword:formData.password,
       confirmPassword:formData.confirmPassword,
-      token:JSON.parse(token)
     }
 
-    const response = await axios.post(`http://localhost:4000/api/reset-password/${tokens}`,payload).then((res) => {
+    const response = await axios.post(`http://localhost:4000/api/reset-password?token=${tokens}`,payload).then((res) => {
       console.log('response::',res)
       toast.success('Password Reset Successfully')
       setFormData({
@@ -117,8 +117,21 @@ const UpdatePassword = () => {
             name="password"
             label="Password"
             variant="outlined"
+            type={showPasswords ? "text" : "password"}
             value={formData.password}
             onChange={(e) => {handleChange(e,'password')}}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowPasswords(!showPasswords)}
+                    edge="end"
+                  >
+                    {showPasswords ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
             required
           />
           <TextField

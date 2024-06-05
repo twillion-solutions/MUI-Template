@@ -1,12 +1,20 @@
-import React from 'react';
+import React,{useEffect} from 'react';
 import BarChart from './barchart';
 import { Grid, Paper,Box } from '@mui/material';
 import PieChart from './piechart';
 import LineChart from './revenue';
 import Users from '../DataGrid/users';
 import SideBar from '../../sidebar';
+import {useDispatch} from 'react-redux';
+import { getProfileDetails } from "../../../operations/authAPi/index";
 
 const FooderData = () => {
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    dispatch(getProfileDetails(token));
+  }, []);
 
   return (
     <Box sx={{display:'flex'}}>

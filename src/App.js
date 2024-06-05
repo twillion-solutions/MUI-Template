@@ -12,28 +12,29 @@ import FooderData from './pages/dashboard/charts/fooder'
 import Order from './pages/order'
 import Register from './pages/auth/register'
 import ChangePassword from './pages/Profile/changePassword'
+import ProtectedRoute from './components/privateRoute'
+import PublicRoute from './components/publicRoute'
 
 
 const App = () => {
   return (
     <div className="App">
         <Routes>
-          <Route path='/' element={<Register/>}/>
-          <Route path='/login' element={<Login/>}/>
-          <Route path='/forgot-password' element={<ForgotPassword/>}/>
-          <Route path='/reset-password/' element={<UpdatePassword/>}/>
+          <Route path="/" element={<PublicRoute component={Register} />} />
+          <Route path="/login" element={<PublicRoute component={Login} />} />
+          <Route path="/forgot-password" element={<PublicRoute component={ForgotPassword} />} />
+          <Route path="/reset-password" element={<PublicRoute component={UpdatePassword} />} />
 
-          <Route path='/dashboard' element={<FooderData/>}/>
-          <Route path='/dashboard/product' element={<AllItems/>}/>
-          <Route path='/dashboard/addproduct' element={<AddProduct />}></Route>
-          <Route path='/dashboard/foodee' element={<Foodee/>}/>
-          <Route path='/dashboard/fooder' element={<FooderData/>}/>
-          <Route path='/dashboard/order' element={<Order/>}/>
-          <Route path='/dashboard/settings' element={<Settings/>}/>
+          <Route path="/dashboard" element={<ProtectedRoute component={FooderData} />} />
+          <Route path="/dashboard/product" element={<ProtectedRoute component={AllItems} />} />
+          <Route path="/dashboard/addproduct" element={<ProtectedRoute component={AddProduct} />} />
+          <Route path="/dashboard/foodee" element={<ProtectedRoute component={Foodee} />} />
+          <Route path="/dashboard/fooder" element={<ProtectedRoute component={FooderData} />} />
+          <Route path="/dashboard/order" element={<ProtectedRoute component={Order} />} />
+          <Route path="/dashboard/settings" element={<ProtectedRoute component={Settings} />} />
 
-          <Route path='/dashboard/profile' element={<Profile/>}/>
-          <Route path='/dashboard/change-password' element={<ChangePassword/>}/>
-
+          <Route path="/dashboard/profile" element={<ProtectedRoute component={Profile} />} />
+          <Route path="/dashboard/change-password" element={<ProtectedRoute component={ChangePassword} />} />
         </Routes>
     </div>
   );

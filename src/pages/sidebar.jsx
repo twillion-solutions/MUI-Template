@@ -124,9 +124,8 @@ export default function SideBar() {
 
   const handleClick = () => {
     const token = localStorage.getItem('token');
-    dispatch(logOut(JSON.parse(token)),navigate);
+    dispatch(logOut(token,navigate))
     setIsOpen(false);
-    navigate('/login')
   }
 
   return (

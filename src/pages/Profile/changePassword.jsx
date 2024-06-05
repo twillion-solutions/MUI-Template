@@ -35,6 +35,9 @@ const ChangePassword = () => {
         confirmPassword:''
     })
   const [showPassword, setShowPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showOldPassword, setShowOldPassword] = useState(false);
+
   const [errors,setErrors] = useState({});
 
   const handleChange = useCallback((e,name) => {
@@ -118,6 +121,18 @@ const ChangePassword = () => {
 
             value={formData.oldPassword}
             onChange={(e) => {handleChange(e,'oldPassword')}}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowOldPassword(!showOldPassword)}
+                    edge="end"
+                  >
+                    {showOldPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
             required
           />
           <TextField
@@ -129,6 +144,18 @@ const ChangePassword = () => {
             variant="outlined"
             value={formData.newPassword}
             onChange={(e) => {handleChange(e,'newPassword')}}
+            InputProps={{
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    edge="end"
+                  >
+                    {showNewPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
+                  </IconButton>
+                </InputAdornment>
+              )
+            }}
             required
           />
           <TextField

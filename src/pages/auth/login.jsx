@@ -18,6 +18,8 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 import Joi from '../../utils/validator'
+import {useDispatch} from 'react-redux'
+import {setToken} from '../../Redux/Slices/authSlice'
 
 const loginSchema = {
   email: Joi.string().email().label('Email').required(),
@@ -26,13 +28,15 @@ const loginSchema = {
 
 const Login = () => {
   const navigate = useNavigate();
+  const data = JSON.parse(localStorage.getItem('rememberMe'))
     const [formData,setFormData] = useState({
-        email:'',
+        email:data && data.rememberMe ? data.email : '',
         password:''
     })
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors,setErrors] = useState({});
+  const dispatch = useDispatch();
 
   const handleChange = useCallback((e,name) => {
 
@@ -54,7 +58,9 @@ const Login = () => {
       toast.error('Validation Errors');
     }else {
     const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
+      dispatch(setToken(res.data.data));
       localStorage.setItem('token',JSON.stringify(res.data.data))
+      rememberMe && localStorage.setItem('rememberMe',JSON.stringify({rememberMe ,email:formData.email}))
       setFormData({
         email:'',
         password:'',
@@ -147,7 +153,7 @@ const Login = () => {
             color="primary"
             label="Remember Me"
           />
-          <Button onClick={handleSign} variant="contained" disabled={rememberMe ? false : true} sx={{
+          <Button onClick={handleSign} variant="contained"  sx={{
             backgroundColor: '#fc661a',
             '&:hover': {
               backgroundColor: '#fc661a',

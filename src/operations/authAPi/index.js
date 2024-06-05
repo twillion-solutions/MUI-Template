@@ -1,7 +1,7 @@
 import { toast } from "react-hot-toast";
 import {AUTH_API,PROFILE_APIS} from '../api';
 import {apiConnector} from '../apiConnector';
-import {setLoading} from '../../Redux/Slices/authSlice';
+import {setLoading,setToken} from '../../Redux/Slices/authSlice';
 import { setProfile } from '../../Redux/Slices/profileSlice';
 
 const { register_api,logout }  = AUTH_API;
@@ -83,7 +83,7 @@ export const updateProfile = (data,image,token) => {
 
 export const logOut = (token,navigate) => {
   const payload = {
-    token:token
+    token:JSON.parse(token)
   }
   return async(dispatch) => {
     const toastId = toast.loading('Loading...')
@@ -97,6 +97,7 @@ export const logOut = (token,navigate) => {
 
       toast.success("User Logout Successfully");
       localStorage.removeItem('token')
+      dispatch(setToken(null));
       dispatch(setProfile(null))
       navigate('/login')
     }catch (error) {

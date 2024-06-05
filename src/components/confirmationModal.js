@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import Modal from '@mui/material/Modal';
-import {useDispatch} from 'react-redux';
 
 
 const style = {
@@ -20,7 +19,6 @@ const style = {
 
 export default function Confirmation({open,setOpen,title,description,handleClick}) {
   const handleClose = () => setOpen(false);
-  const dispatch = useDispatch()
 
   return (
     <div>

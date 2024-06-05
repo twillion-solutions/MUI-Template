@@ -19,6 +19,7 @@ import FormLabel from '@mui/material/FormLabel';
 import axios from 'axios';
 import {toast} from 'react-hot-toast';
 import Joi from '../../utils/validator'
+import {Link} from 'react-router-dom'
 
 const registerSchema = {
   firstName: Joi.string().label('FirstName').required(),
@@ -40,12 +41,7 @@ const Register = () => {
         gender:'male',
     })
     const [showPassword, setShowPassword] = useState(false);
-    const [file,setFile] = useState(null);
     const [errors,setErrors] = useState({});
-
-    const handleFileChnage = (e) => {
-      setFile(e.target.files[0])
-    }
 
   const handleChange = useCallback((e,name) => {
 
@@ -66,22 +62,15 @@ const Register = () => {
       setErrors(errors)
       toast.error('Validation Errors');
     }else {
-    const data = new FormData();
-    data.append('firstName',formData.firstName)
-    data.append('lastName',formData.lastName)
-    data.append('email',formData.email)
-    data.append('password',formData.password)
-    data.append('gender',formData.gender)
-    data.append('phone',formData.phone)
-    data.append('file',file)
-    
-    const response = await axios.post('http://localhost:4000/api/register', data, {
-      headers: {
-        'Content-Type': 'multipart/form-data'
+      const payload = {
+        firstName:formData.firstName,
+        lastName:formData.lastName,
+        email:formData.email,
+        password:formData.password,
+        phone:formData.phone,
+        gender:formData.gender,
       }
-      
-    }).then((res) => {
-      console.log("response::",res);
+    const response = await axios.post('http://localhost:4000/api/register', formData).then((res) => {
       setFormData({
         firstName:'',
         lastName:'',
@@ -90,7 +79,6 @@ const Register = () => {
         password:'',
         gender:'male',
       })
-      setFile(null);
       navigate('/login')
       toast.success('User Register Successfully!')
     }).catch((error) => {
@@ -201,7 +189,6 @@ const Register = () => {
             }}
             required
           />
-          <input type='file' onChange={(e) => handleFileChnage(e)} name='file'/>
           <FormLabel id="gender" sx={{textAlign:"left"}}>Gender</FormLabel>
           <RadioGroup
           row
@@ -234,6 +221,21 @@ const Register = () => {
             },}}>
             Sign UP
           </Button>
+
+          <Box sx={{display:'flex',gap:'10px',justifyContent:'center'}}>
+          <Typography>Already have Account ?</Typography>
+          <Link
+            to='/login'
+            align="right"
+            variant="subtitle2"
+            underline="hover"
+            sx={{
+              cursor: "pointer"
+            }}
+          >
+            Login
+          </Link>
+          </Box>
         </Stack>
       </Paper>
      

@@ -122,7 +122,9 @@ const Profile = () => {
                   <input type="file" hidden onChange={handleAvatarChange} />
                 </IconButton>
               )}
-              <Typography variant="h4">{`${profile?.firstName} ${profile?.lastName}`}</Typography>
+              <Typography align="center" component="h1" variant="h5" sx={{ mb: 1,fontWeight:'bold',color:'#4e4e4e' }}>
+              {`${profile?.firstName} ${profile?.lastName}`}</Typography>
+              
             </Box>
             <Grid container spacing={2} style={{ marginTop: "2rem" }}>
               {editMode ? (
