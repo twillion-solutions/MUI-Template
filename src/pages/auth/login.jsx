@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState,useEffect } from "react";
 import {
   Box,
   Paper,
@@ -50,6 +50,12 @@ const Login = () => {
         [name] : e.target.value
     }))
   },[])
+
+  useEffect(() => {
+    if(data.email === formData.email){
+      setRememberMe(true);
+    }
+  },[formData,data])
 
   const handleSign = async() => {
     const errors = Joi.validateToPlainErrors(formData, loginSchema);
