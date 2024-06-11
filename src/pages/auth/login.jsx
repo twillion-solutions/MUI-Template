@@ -52,10 +52,16 @@ const Login = () => {
   },[])
 
   useEffect(() => {
-    if(data.email === formData.email){
+    if(data && data.email === formData.email){
       setRememberMe(true);
     }
-  },[formData,data])
+  },[])
+
+  useEffect(() => {
+    if(data && data.email === formData.email){
+      rememberMe === true && localStorage.removeItem('rememberMe')
+    }
+  },[formData])
 
   const handleSign = async() => {
     const errors = Joi.validateToPlainErrors(formData, loginSchema);
@@ -153,7 +159,7 @@ const Login = () => {
               <Switch
                 color="warning"
                 checked={rememberMe}
-                onChange={(event) => setRememberMe(event.target.checked)}
+                onChange={(event) => {console.log(event.target.checked);setRememberMe(event.target.checked)}}
               />
             }
             color="primary"

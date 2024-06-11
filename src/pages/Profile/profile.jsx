@@ -3,10 +3,11 @@ import SideBar from "../sidebar";
 import { useDispatch, useSelector } from "react-redux";
 import { getProfileDetails, updateProfile } from "../../operations/authAPi/index";
 import { Radio, RadioGroup, FormControlLabel } from "@mui/material";
-import { Box, Typography, Avatar, Grid, Paper, Button, TextField, IconButton } from '@mui/material';
+import { Box, Typography, Avatar,Container, Grid, Paper, Button, TextField, IconButton } from '@mui/material';
 import PhotoCamera from '@mui/icons-material/PhotoCamera';
 import Joi from '../../utils/validator';
 import { toast } from 'react-hot-toast';
+import ImageCropper from './profileImage'
 import "./style.css";
 
 const profileSchema = {
@@ -30,6 +31,20 @@ const Profile = () => {
     gender: '',
   });
   const [errors, setErrors] = useState({});
+  const [imageToCrop, setImageToCrop] = useState(undefined);
+    const [croppedImage, setCroppedImage] = useState(undefined);
+
+    const onUploadFile = (event) => {
+        if (event.target.files && event.target.files.length > 0) {
+            const reader = new FileReader();
+
+            reader.addEventListener('load', () =>
+                setImageToCrop(reader.result)
+            );
+
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
@@ -80,10 +95,12 @@ const Profile = () => {
       toast.error('Validation Errors');
     }else {
     const token = localStorage.getItem("token");
-    dispatch(updateProfile(formData,avatarPreview,token))
+    dispatch(updateProfile(formData,croppedImage,token))
     setEditMode(false);
     }
   };
+
+  console.log("croppedImage::",imageToCrop)
 
   return (
     <Box sx={{ display: "flex" }}>
@@ -113,14 +130,27 @@ const Profile = () => {
             <Box display="flex" alignItems="center" flexDirection="column">
               <Avatar
                 alt={`${profile?.firstName} ${profile?.lastName}`}
-                src={avatarPreview ? avatarPreview : profile?.profile}
+                src={croppedImage ? croppedImage : profile?.profile}
                 sx={{ width: 100, height: 100, marginBottom: 2 }}
               />
               {editMode && (
+                <React.Fragment>
                 <IconButton color="primary" component="label">
                   <PhotoCamera />
-                  <input type="file" hidden onChange={handleAvatarChange} />
+                  <input
+                  hidden
+                        type="file"
+                        accept="image/*"
+                        onChange={onUploadFile}
+                    />
                 </IconButton>
+                <Box>
+                    <ImageCropper
+                      imageToCrop={imageToCrop}
+                      onImageCropped={(croppedImage) => setCroppedImage(croppedImage)}
+                    />
+                  </Box>
+                </React.Fragment>
               )}
               <Typography align="center" component="h1" variant="h5" sx={{ mb: 1,fontWeight:'bold',color:'#4e4e4e' }}>
               {`${profile?.firstName} ${profile?.lastName}`}</Typography>

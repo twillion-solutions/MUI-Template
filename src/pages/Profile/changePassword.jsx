@@ -118,7 +118,7 @@ const ChangePassword = () => {
             name="oldPassword"
             label="Old Password"
             variant="outlined"
-
+            type={showOldPassword ? "text" : "password"}
             value={formData.oldPassword}
             onChange={(e) => {handleChange(e,'oldPassword')}}
             InputProps={{
@@ -141,6 +141,7 @@ const ChangePassword = () => {
             size="small"
             name="newPassword"
             label="New Password"
+            type={showNewPassword ? "text" : "password"}
             variant="outlined"
             value={formData.newPassword}
             onChange={(e) => {handleChange(e,'newPassword')}}
