@@ -69,6 +69,7 @@ const Login = () => {
       setErrors(errors)
       toast.error('Validation Errors');
     }else {
+    axios.defaults.withCredentials = true;
     const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
       dispatch(setToken(res.data.data));
       localStorage.setItem('token',JSON.stringify(res.data.data))

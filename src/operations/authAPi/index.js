@@ -3,6 +3,7 @@ import {AUTH_API,PROFILE_APIS} from '../api';
 import {apiConnector} from '../apiConnector';
 import {setLoading,setToken} from '../../Redux/Slices/authSlice';
 import { setProfile } from '../../Redux/Slices/profileSlice';
+import axios from 'axios'
 
 const { register_api,logout }  = AUTH_API;
 
@@ -43,7 +44,7 @@ export const getProfileDetails = (token) => {
       dispatch(setProfile(response.data.data))
     }catch(error) {
       console.log("error::",error)
-      toast.error(error.response && error.response.data)
+      // toast.error(error.response && error.response.data)
     }
     dispatch(setLoading(false));
     toast.dismiss(toastId)
@@ -89,6 +90,7 @@ export const logOut = (token,navigate) => {
     const toastId = toast.loading('Loading...')
     dispatch(setLoading(true));
     try {
+      axios.defaults.withCredentials = true;
       const response = await apiConnector('POST',logout,payload);
       console.log("response::",response)
       if(!response.data.success){

@@ -100,8 +100,6 @@ const Profile = () => {
     }
   };
 
-  console.log("croppedImage::",imageToCrop)
-
   return (
     <Box sx={{ display: "flex" }}>
       <SideBar />
