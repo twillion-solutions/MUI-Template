@@ -20,6 +20,7 @@ import {toast} from 'react-hot-toast';
 import Joi from '../../utils/validator'
 import {useDispatch} from 'react-redux'
 import {setToken} from '../../Redux/Slices/authSlice'
+import Cookies from 'js-cookie'
 
 const loginSchema = {
   email: Joi.string().email().label('Email').required(),
@@ -78,8 +79,11 @@ const Login = () => {
         email:'',
         password:'',
       })
-      navigate('/dashboard')
+      const referBy = Cookies.get('refer');
+
+      referBy  ? window.location.href = "http://accounts.local.com" : navigate('/dashboard')
       toast.success('User Login Successfully!')
+      Cookies.set('token',JSON.stringify(res.data.data),{expires:2,domain:'.local.com'});
     }).catch((error) => {
       console.log('error::',error)
       toast.error(error.response && error.response.data.msg)
@@ -174,7 +178,7 @@ const Login = () => {
             Sign In
           </Button>
           <Link
-            to='/forgot-password'
+            to='https://accounts.local.com'
             align="right"
             variant="subtitle2"
             underline="hover"
