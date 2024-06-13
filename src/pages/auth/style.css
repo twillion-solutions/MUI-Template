@@ -1,0 +1,14 @@
+.login_page {
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        position: relative;
+}
+
+.login_page .auth_form {
+        padding: 2rem;
+        width: 30rem;
+        max-width: 95%;
+        z-index:1;
+}

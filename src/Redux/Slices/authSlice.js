@@ -3,6 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   users: null,
   loading: false,
+  currentTheme:'ThemeOne',
   token:localStorage.getItem('token') ? JSON.stringify(localStorage.getItem('token')) : null,
 };
 
@@ -19,9 +20,12 @@ const authSlice = createSlice({
     setToken(state, value) {
       state.token = value.payload;
     },
+    setCurrentTheme(state,value){
+      state.currentTheme = value.payload
+    }
   },
 });
 
-export const { setSignupData, setLoading, setToken } = authSlice.actions;
+export const { setSignupData, setLoading, setToken,setCurrentTheme } = authSlice.actions;
 
 export default authSlice.reducer;
