@@ -101,11 +101,7 @@ const Register = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(setCurrentTheme('ThemeOne'))
-  },[])
-
-  const selectedTheme = currentTheme === 'ThemeOne' ? ThemeOne : ThemeTwo;
+  const selectedTheme = currentTheme !== 'ThemeOne' ? ThemeOne : ThemeTwo;
 
   return (
     <ThemeProvider theme={selectedTheme}>
@@ -335,7 +331,7 @@ const Register = () => {
             <Button onClick={handleRegister} variant="contained" sx={{
               backgroundColor: selectedTheme.palette.button.main,
               '&:hover': {
-                backgroundColor: selectedTheme.palette.primary.dark,
+                backgroundColor: selectedTheme.palette.button.main,
               },
             }}>
               Sign Up

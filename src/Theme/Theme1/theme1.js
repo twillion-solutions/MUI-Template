@@ -15,6 +15,9 @@ const ThemeOne = createTheme({
     button: {
       main: '#ffffff',
     },
+    action:{
+      hover:'#2c2c2c'
+    }
   },
 
 });

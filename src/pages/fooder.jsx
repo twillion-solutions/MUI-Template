@@ -2,7 +2,6 @@ import React from 'react'
 import Users from './dashboard/DataGrid/users'
 
 const Fooder = () => {
-  
   const columns = [
     { field: "id", headerName: "ID", flex: 10 },
     { field: "firstName", headerName: "First Name", flex: 15 },

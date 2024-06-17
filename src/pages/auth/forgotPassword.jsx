@@ -68,11 +68,7 @@ const ForgotPassword = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(setCurrentTheme('ThemeOne'))
-  },[])
-
-  const selectedTheme = currentTheme === 'ThemeOne' ? ThemeOne : ThemeTwo;
+  const selectedTheme = currentTheme !== 'ThemeOne' ? ThemeOne : ThemeTwo;
 
   return (
     <ThemeProvider theme={selectedTheme}>
@@ -121,7 +117,7 @@ const ForgotPassword = () => {
             <Button onClick={handleForgotPassword} variant="contained" sx={{
               backgroundColor: selectedTheme.palette.button.main,
               '&:hover': {
-                backgroundColor: selectedTheme.palette.primary.dark,
+                backgroundColor: selectedTheme.palette.button.main,
               },
             }}>
               Send

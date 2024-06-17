@@ -1,5 +1,5 @@
-import React,{useState} from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import React, { useState, useEffect } from 'react';
+import { styled, useTheme, ThemeProvider } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -13,7 +13,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
 import ChevronRightIcon from '@mui/icons-material/ChevronRight';
 import { settings } from '../constant/sidebarLinks';
-import './style.css'
+import './style.css';
 
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
@@ -23,9 +23,13 @@ import Avatar from '@mui/material/Avatar';
 import { useNavigate } from 'react-router-dom';
 import { sidebarLinks } from '../constant/sidebarLinks';
 import SiderbarItems from './sidebarItems';
-import {useSelector,useDispatch} from 'react-redux'
+import { useSelector, useDispatch } from 'react-redux';
 import Confirmation from '../components/confirmationModal';
-import {logOut} from '../operations/authAPi/index';
+import { logOut } from '../operations/authAPi/index';
+
+import ThemeOne from '../Theme/Theme1/theme1';
+import ThemeTwo from '../Theme/Theme2/theme2';
+import { setCurrentTheme } from '../Redux/Slices/authSlice';
 
 const drawerWidth = 240;
 
@@ -66,6 +70,8 @@ const AppBar = styled(MuiAppBar, {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
   }),
+  backgroundColor: theme.palette.primary.main,
+  color: theme.palette.primary.contrastText,
   ...(open && {
     marginLeft: drawerWidth,
     width: `calc(100% - ${drawerWidth}px)`,
@@ -94,13 +100,15 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 );
 
 export default function SideBar() {
-  const {profile} = useSelector((store) => store.profile)
-  const [anchorElUser, setAnchorElUser] = React.useState(null);
-  const theme = useTheme();
-  const [open, setOpen] = React.useState(true);
-  const [isOpen,setIsOpen] = useState(false);
+  const { profile } = useSelector((store) => store.profile);
+  const { currentTheme } = useSelector((state) => state.auth);
+  const [anchorElUser, setAnchorElUser] = useState(null);
+  const [open, setOpen] = useState(true);
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
+
+  const theme = useTheme();
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -115,97 +123,113 @@ export default function SideBar() {
   };
 
   const handleCloseUserMenu = (path) => {
-    if(path === ''){
-      setIsOpen(true)
+    if (path === '') {
+      setIsOpen(true);
     }
-    navigate(`${path}`)
+    navigate(`${path}`);
     setAnchorElUser(null);
   };
 
   const handleClick = () => {
     const token = localStorage.getItem('token');
-    dispatch(logOut(token,navigate))
+    dispatch(logOut(token, navigate));
     setIsOpen(false);
-  }
+  };
+
+  useEffect(() => {
+    dispatch(setCurrentTheme('ThemeOne'));
+  }, [dispatch]);
+
+  const selectedTheme = currentTheme !== 'ThemeOne' ? ThemeOne : ThemeTwo;
 
   return (
-    <React.Fragment>
-    <Box sx={{ display: 'flex' }}>
-      <CssBaseline />
-      <AppBar position="fixed" open={open} sx={{backgroundColor:'white'}}>
+    <ThemeProvider theme={selectedTheme}>
+      <Box sx={{ display: 'flex' }}>
+        <CssBaseline />
+        <AppBar position="fixed" open={open} sx={{ backgroundColor: selectedTheme.palette.background.paper }}>
         <Toolbar>
           <IconButton
-            color="inherit"
             aria-label="open drawer"
             onClick={handleDrawerOpen}
             edge="start"
             sx={{
-              fontWeight:'bold',
-              color:'#4a4c4e',
               marginRight: 5,
+              color: selectedTheme.palette.text.primary,
               ...(open && { display: 'none' }),
             }}
           >
             <MenuIcon />
           </IconButton>
-          <Typography sx={{color:'#4a4c4e',fontWeight:'bold'}} variant="h5" noWrap component="div">
-           Foodo App
+          <Typography variant="h5" noWrap component="div" sx={{ color: selectedTheme.palette.text.primary }}>
+            Foodo App
           </Typography>
-          <Box sx={{ flexGrowashboard: 0 }}>
-            <Tooltip title="Open settings">
-              <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+          <Box sx={{ flexGrow: 1 }} />
+          <Tooltip title="Open settings">
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
               <Avatar
                 alt={`${profile?.firstName} ${profile?.lastName}`}
-                src={ profile?.profile}
+                src={profile?.profile}
               />
-              </IconButton>
-            </Tooltip>
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {settings.map((setting) => (
-                <MenuItem key={setting.id} onClick={() => { handleCloseUserMenu(setting.path)}}>
-                  <Typography textAlign="center">{setting.tittle}</Typography>
-                </MenuItem>
-              ))}
-            </Menu>
-        </Box>
+            </IconButton>
+          </Tooltip>
+          <Menu
+            sx={{ 
+              mt: '45px',
+              '& .MuiPaper-root': {
+                backgroundColor: selectedTheme.palette.background.paper,
+                color: selectedTheme.palette.text.primary,
+              },
+            }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting) => (
+              <MenuItem 
+                key={setting.id} 
+                onClick={() => { handleCloseUserMenu(setting.path) }}
+                sx={{
+                  '&:hover': {
+                    backgroundColor: selectedTheme.palette.action.hover,
+                  },
+                }}
+              >
+                <Typography textAlign="center">{setting.tittle}</Typography>
+              </MenuItem>
+            ))}
+          </Menu>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open} >
-        <DrawerHeader>
-        <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG1UEQPNKrTtW7hzlzc2HblkrWVpvVxHR5qg&usqp=CAU' style={{width:'160px'}}/>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
-          </IconButton>
-        </DrawerHeader>
-        <Divider />
-        <Box className='sidebar-links'>
-          <List>
+        <Drawer variant="permanent" open={open}>
+          <DrawerHeader>
+            <img src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQG1UEQPNKrTtW7hzlzc2HblkrWVpvVxHR5qg&usqp=CAU' style={{ width: '160px' }} />
+            <IconButton onClick={handleDrawerClose} sx={{ color: selectedTheme.palette.text.primary }}>
+              {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
+            </IconButton>
+          </DrawerHeader>
+          <Divider />
+          <Box className='sidebar-links'>
+            <List>
               {
                 sidebarLinks.map((link) => (
-                  <SiderbarItems key={link.id} link={link} navigate={navigate} open={open}/>
+                  <SiderbarItems key={link.id} link={link} navigate={navigate} open={open} />
                 ))
               }
-          </List>
-        </Box>
-    
-      </Drawer>
-    </Box>
-    <Confirmation handleClick={handleClick} open={isOpen} setOpen={setIsOpen} title={'Are you Sure to Logout?'} description={''}/>
-    </React.Fragment>
+            </List>
+          </Box>
+        </Drawer>
+      </Box>
+      <Confirmation handleClick={handleClick} open={isOpen} setOpen={setIsOpen} title={'Are you Sure to Logout?'} description={''} />
+    </ThemeProvider>
   );
 }

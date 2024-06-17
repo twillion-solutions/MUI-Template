@@ -15,7 +15,6 @@ import ChangePassword from './pages/Profile/changePassword'
 import ProtectedRoute from './components/privateRoute'
 import PublicRoute from './components/publicRoute'
 
-
 const App = () => {
   return (
     <div className="App">

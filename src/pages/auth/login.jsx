@@ -36,10 +36,11 @@ const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const {currentTheme} = useSelector((state) => state.auth)
-  const [formData, setFormData] = useState({
-    email: '',
-    password: ''
-  });
+  const data = JSON.parse(localStorage.getItem('rememberMe'))
+  const [formData,setFormData] = useState({
+      email:data && data.rememberMe ? data.email : '',
+      password:''
+  })
   const [rememberMe, setRememberMe] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [errors, setErrors] = useState({});
@@ -56,6 +57,18 @@ const Login = () => {
     }));
   };
 
+  useEffect(() => {
+    if(data && data.email == formData.email){
+      setRememberMe(true);
+    }
+  },[])
+
+  useEffect(() => {
+    if(data && data.email == formData.email){
+      rememberMe === true && localStorage.removeItem('rememberMe')
+    }
+  },[formData])
+
   const handleSign = async () => {
     const errors = Joi.validateToPlainErrors(formData, loginSchema);
     if (Object.keys(errors).length) {
@@ -66,7 +79,7 @@ const Login = () => {
       const response = await axios.post('http://localhost:4000/api/login', formData).then((res) => {
         dispatch(setToken(res.data.data));
         localStorage.setItem('token', JSON.stringify(res.data.data));
-        rememberMe && localStorage.setItem('rememberMe', JSON.stringify({ rememberMe, email: formData.email }));
+        rememberMe ? localStorage.setItem('rememberMe', JSON.stringify({ rememberMe, email: formData.email })):localStorage.removeItem('rememberMe');
         setFormData({
           email: '',
           password: '',
@@ -83,11 +96,7 @@ const Login = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(setCurrentTheme('ThemeOne'))
-  },[])
-
-  const selectedTheme = currentTheme == 'ThemeOne' ? ThemeOne : ThemeTwo;
+  const selectedTheme = currentTheme !== 'ThemeOne' ? ThemeOne : ThemeTwo;
 
   return (
     <ThemeProvider theme={selectedTheme}>
@@ -112,6 +121,7 @@ const Login = () => {
               name="email"
               label="Username"
               variant="outlined"
+              autoComplete='off'
               required
               sx={{
                 '& .MuiOutlinedInput-root': {
@@ -143,6 +153,7 @@ const Login = () => {
               type={showPassword ? "text" : "password"}
               value={formData.password}
               onChange={(e) => { handleChange(e, 'password') }}
+              autoComplete='off'
               InputProps={{
                 endAdornment: (
                   <InputAdornment position="end">

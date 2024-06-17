@@ -3,7 +3,7 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialState = {
   users: null,
   loading: false,
-  currentTheme:'ThemeOne',
+  currentTheme:'ThemeTwo',
   token:localStorage.getItem('token') ? JSON.stringify(localStorage.getItem('token')) : null,
 };
 

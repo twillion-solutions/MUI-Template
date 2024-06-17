@@ -4,6 +4,7 @@ const ThemeTwo = createTheme({
   palette: {
     primary: {
       main: '#ff5722',
+      icons:'#4e4e4e'
     },
     background: {
       default: '#e8e8e8',

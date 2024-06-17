@@ -4,17 +4,22 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import { useLocation } from "react-router-dom";
-import { Typography } from "@mui/material";
+import { Typography, ThemeProvider } from "@mui/material";
+import { useSelector } from 'react-redux';
+import ThemeOne from '../Theme/Theme1/theme1'; 
+import ThemeTwo from '../Theme/Theme2/theme2'; 
 
-const SiderbarItems = ({ link, navigate, open }) => {
+const SidebarItems = ({ link, navigate, open }) => {
     const location = useLocation();
+    const { currentTheme } = useSelector((state) => state.auth);
+    const selectedTheme = currentTheme !== 'ThemeOne' ? ThemeOne : ThemeTwo;
 
     const matchRoute = (path) => {
         return location.pathname === path;
-    }
+    };
 
     return (
-        <React.Fragment>
+        <ThemeProvider theme={selectedTheme}>
             <ListItem
                 key={link.id}
                 disablePadding
@@ -26,16 +31,16 @@ const SiderbarItems = ({ link, navigate, open }) => {
                 <ListItemButton
                     sx={{
                         "&:hover": {
-                            backgroundColor: "#e8e8e8",
-                            borderLeft: "2px solid #757575",
+                            backgroundColor: selectedTheme.palette.action.hover,
+                            borderLeft: `2px solid ${selectedTheme.palette.text.primary}`,
                             marginLeft: "5px",
                         },
                         minHeight: 48,
                         justifyContent: open ? "initial" : "center",
                         px: 2.5,
-                        backgroundColor: matchRoute(link.path) ? '#e8e8e8' : 'inherit',
-                        borderLeft: matchRoute(link.path) ? '2px solid #757575' : '2px solid white',
-                        marginLeft: matchRoute(link.path) ? '5px' : '5px',
+                        backgroundColor: matchRoute(link.path) ? selectedTheme.palette.background.default : 'inherit',
+                        borderLeft: matchRoute(link.path) ? `2px solid ${selectedTheme.palette.text.primary}` : `2px solid ${selectedTheme.palette.background.paper}`,
+                        marginLeft: '5px',
                     }}
                 >
                     <ListItemIcon
@@ -43,18 +48,20 @@ const SiderbarItems = ({ link, navigate, open }) => {
                             minWidth: 0,
                             mr: open ? 2 : "auto",
                             justifyContent: "center",
+                            color: matchRoute(link.path) ? selectedTheme.palette.text.primary : selectedTheme.palette.text.primary,
                         }}
                     >
                         {link.icon}
                     </ListItemIcon>
-
-                    <ListItemText sx={{ opacity: open ? 1 : 0}} >
-                    <Typography variant="body1" sx={{fontWeight:'bold',color:'#4e4e4e',fontSize:'14px'}}>{link.title}</Typography>
+                    <ListItemText sx={{ opacity: open ? 1 : 0 }} >
+                        <Typography variant="body1" sx={{ fontWeight: 'bold', color: selectedTheme.palette.text.primary, fontSize: '14px' }}>
+                            {link.title}
+                        </Typography>
                     </ListItemText>
                 </ListItemButton>
             </ListItem>
-        </React.Fragment>
+        </ThemeProvider>
     );
 };
 
-export default SiderbarItems;
+export default SidebarItems;

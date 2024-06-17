@@ -84,10 +84,6 @@ const UpdatePassword = () => {
     }
   };
 
-  useEffect(() => {
-    dispatch(setCurrentTheme('ThemeOne'))
-  },[])
-
   const selectedTheme = currentTheme === 'ThemeOne' ? ThemeOne : ThemeTwo;
 
   return (
@@ -196,7 +192,7 @@ const UpdatePassword = () => {
             <Button onClick={handleResetPassword} variant="contained" sx={{
               backgroundColor: selectedTheme.palette.button.main,
               '&:hover': {
-                backgroundColor: selectedTheme.palette.primary.dark,
+                backgroundColor: selectedTheme.palette.button.main,
               },
             }}>
               Update
